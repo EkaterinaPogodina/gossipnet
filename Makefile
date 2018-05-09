@@ -1,6 +1,6 @@
 
-
-TF_INC="/home/jhosang/env/py3.4-tensorflow/lib/python3.4/site-packages/tensorflow/include"
+packages
+TF_INC="./anaconda3/envs/tensorflow_p36/lib/python3.6/site-packages/tensorflow/include"
 
 .PHONY: all
 
