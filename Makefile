@@ -1,5 +1,4 @@
 
-packages
 TF_INC="./anaconda3/envs/tensorflow_p36/lib/python3.6/site-packages/tensorflow/include"
 
 .PHONY: all
