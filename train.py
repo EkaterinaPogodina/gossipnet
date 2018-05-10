@@ -400,7 +400,7 @@ def visualize_detections(sess, it, learning_rate, lr_gen, net, train_op):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-r', '--resume', default=False, action='store_true')
-    parser.add_argument('-c', '--config', default='conf.yaml')
+    parser.add_argument('-c', '--config', default='experiments/coco_person/conf.yaml')
     parser.add_argument('-v', '--visualize', default=False, action='store_true')
     args, unparsed = parser.parse_known_args()
 
