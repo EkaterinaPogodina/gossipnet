@@ -11,7 +11,7 @@ import tensorflow.contrib.slim as slim
 from tensorflow.contrib.slim.nets import resnet_v1
 
 from nms_net import cfg
-from nms_net.roi_pooling_layer import roi_pooling_op, roi_pooling_op_grad
+from nms_net.roi_pooling_layer import roi_pooling_op
 from nms_net import matching_module
 
 
