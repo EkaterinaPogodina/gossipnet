@@ -95,7 +95,7 @@ def to_tf_coords(boxes, hw):
 
 
 def to_frcn_coords(boxes):
-    shape = tf.pack([tf.shape(boxes)[0], 1])
+    shape = tf.stack([tf.shape(boxes)[0], 1])
     new_boxes = tf.concat(1, [tf.zeros(shape, dtype=boxes.dtype), boxes])
     return new_boxes
 
@@ -183,7 +183,7 @@ class Gnet(object):
                         tf.reshape(self.det_classes, [-1, 1]),
                         tf.reshape(self.gt_classes, [1, -1]))
                     zeros = tf.zeros_like(self.det_anno_iou)
-                    self.det_anno_iou = tf.select(same_class,
+                    self.det_anno_iou = tf.where(same_class,
                                                   self.det_anno_iou, zeros)
                 else:
                     print('doing single class NMS')
@@ -240,7 +240,7 @@ class Gnet(object):
                         biases_initializer=biases_init)
             else:
                 with tf.variable_scope('gnet'):
-                    shortcut_shape = tf.pack([self.num_dets, cfg.gnet.shortcut_dim])
+                    shortcut_shape = tf.stack([self.num_dets, cfg.gnet.shortcut_dim])
                     start_feat = tf.zeros(shortcut_shape, dtype=tf.float32)
             self.block_feats = []
             self.block_feats.append(start_feat)
@@ -291,7 +291,7 @@ class Gnet(object):
                         tf.shape(self.gt_crowd)[0] > 0,
                         lambda: tf.gather(tf.cast(self.gt_classes, tf.int32), tf.maximum(self.det_gt_matching, 0)),
                         lambda: tf.zeros(tf.shape(self.labels), dtype=tf.int32))
-                det_class = tf.select(
+                det_class = tf.where(
                         tf.logical_and(self.det_gt_matching >= 0,
                                        tf.logical_not(det_crowd)),
                         det_class, tf.zeros_like(det_class))
@@ -371,7 +371,7 @@ class Gnet(object):
                 # zero out features where c_idx == n_idx
                 is_id_row = tf.equal(pair_c_idxs, pair_n_idxs)
                 zeros = tf.zeros(tf.shape(n_feats), dtype=feats.dtype)
-                n_feats = tf.select(is_id_row, zeros, n_feats)
+                n_feats = tf.where(is_id_row, zeros, n_feats)
 
                 feats = tf.concat(1, [pw_feats, c_feats, n_feats])
 
@@ -411,7 +411,7 @@ class Gnet(object):
     def _geometry_feats(self, c_idxs, n_idxs):
         with tf.variable_scope('pairwise_features'):
             if self.multiclass:
-                mc_score_shape = tf.pack([self.num_dets, self.num_classes])
+                mc_score_shape = tf.stack([self.num_dets, self.num_classes])
                 # classes are one-based (0 is background)
                 mc_score_idxs = tf.stack(
                     [tf.range(self.num_dets), self.det_classes - 1], axis=1)
@@ -483,9 +483,9 @@ class Gnet(object):
                 return iou
             else:
                 ioa = tf.div(intersection, a_area)
-                crowd_multiple = tf.pack([tf.shape(a_area)[0], 1])
+                crowd_multiple = tf.stack([tf.shape(a_area)[0], 1])
                 crowd = tf.tile(tf.reshape(crowd, [1, -1]), crowd_multiple, name='det_gt_crowd')
-                return tf.select(crowd, ioa, iou)
+                return tf.where(crowd, ioa, iou)
 
     @staticmethod
     def _intersection(a, b):
@@ -532,7 +532,7 @@ class Knet(object):
                         tf.reshape(self.det_classes, [-1, 1]),
                         tf.reshape(self.gt_classes, [1, -1]))
                     zeros = tf.zeros_like(self.det_anno_iou)
-                    self.det_anno_iou = tf.select(same_class,
+                    self.det_anno_iou = tf.where(same_class,
                                                   self.det_anno_iou, zeros)
                 else:
                     print('doing single class NMS')
@@ -625,7 +625,7 @@ class Knet(object):
                 tf.shape(self.gt_crowd)[0] > 0,
                 lambda: tf.gather(tf.cast(self.gt_classes, tf.int32), tf.maximum(self.det_gt_matching, 0)),
                 lambda: tf.zeros(tf.shape(self.labels), dtype=tf.int32))
-        det_class = tf.select(
+        det_class = tf.where(
                 tf.logical_and(self.det_gt_matching >= 0,
                                tf.logical_not(det_crowd)),
                 det_class, tf.zeros_like(det_class))
