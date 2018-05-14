@@ -468,7 +468,7 @@ class Gnet(object):
         aw = ax2 - ax1
         ah = ay2 - ay1
 
-        area = tf.mul(aw, ah)
+        area = tf.multiply(aw, ah)
         return (ax1, ay1, aw, ah, ax2, ay2, area)
 
     @staticmethod
