@@ -449,8 +449,8 @@ class Gnet(object):
             h_diff = tf.log(n_h / c_h) / log2
             aspect_diff = (tf.log(n_w / n_h) - tf.log(c_w / c_h)) / log2
 
-            all = tf.concat(1, [c_score, n_score, ious, x_dist, y_dist, l2_dist,
-                w_diff, h_diff, aspect_diff])
+            all = tf.concat([c_score, n_score, ious, x_dist, y_dist, l2_dist,
+                w_diff, h_diff, aspect_diff], 1)
             return tf.stop_gradient(all)
 
     @staticmethod
