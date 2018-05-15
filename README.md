@@ -15,6 +15,8 @@ http://images.cocodataset.org/annotations/annotations_trainval2014.zip
 Data download
 http://images.cocodataset.org/zips/train2014.zip
 
+COCO API
+https://github.com/cocodataset/cocoapi.git
 
 Link to the coco API in the root directory, like so:
 ```
