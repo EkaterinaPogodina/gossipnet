@@ -30,7 +30,6 @@ def load_coco(split, year):
     if not os.path.exists(ann_file):
         ann_file = os.path.join(cfg.ROOT_DIR, 'data', 'coco', 'annotations',
                                 'image_info_{}{}.json'.format(split, year))
-        has_gt = False
     coco = COCO(ann_file)
     categories = coco.loadCats(coco.getCatIds())
     classes = tuple(['__background__'] + [c['name'] for c in categories])
