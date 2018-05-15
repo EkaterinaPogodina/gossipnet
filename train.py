@@ -82,8 +82,6 @@ def load_and_enqueue(sess, enqueue_op, coord, dataset, placeholders):
         if coord.should_stop():
             return  
         batch = dataset.next_batch()
-        print(batch)
-        return
         food = {ph: batch[name] for (name, ph) in placeholders}
         sess.run(enqueue_op, feed_dict=food)
 
