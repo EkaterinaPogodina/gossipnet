@@ -477,7 +477,7 @@ class Gnet(object):
             a_area = tf.reshape(a[6], [-1, 1])
             b_area = tf.reshape(b[6], [1, -1])
             intersection = Gnet._intersection(a, b)
-            union = tf.sub(tf.add(a_area, b_area), intersection)
+            union = tf.subtract(tf.add(a_area, b_area), intersection)
             iou = tf.div(intersection, union)
             if crowd is None:
                 return iou
@@ -505,9 +505,9 @@ class Gnet(object):
         y1 = tf.maximum(tf.reshape(ay1, [-1, 1]), tf.reshape(by1, [1, -1]))
         x2 = tf.minimum(tf.reshape(ax2, [-1, 1]), tf.reshape(bx2, [1, -1]))
         y2 = tf.minimum(tf.reshape(ay2, [-1, 1]), tf.reshape(by2, [1, -1]))
-        w = tf.maximum(0.0, tf.sub(x2, x1))
-        h = tf.maximum(0.0, tf.sub(y2, y1))
-        intersection = tf.mul(w, h)
+        w = tf.maximum(0.0, tf.subtract(x2, x1))
+        h = tf.maximum(0.0, tf.subtract(y2, y1))
+        intersection = tf.multiply(w, h)
         return intersection
 
 
