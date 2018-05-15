@@ -1,0 +1,6 @@
+cython
+tensorflow-gpu
+Pillow
+imread
+tqdm
+easydict
