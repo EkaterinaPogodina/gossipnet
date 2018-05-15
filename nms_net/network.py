@@ -373,7 +373,7 @@ class Gnet(object):
                 zeros = tf.zeros(tf.shape(n_feats), dtype=feats.dtype)
                 n_feats = tf.where(is_id_row, zeros, n_feats)
 
-                feats = tf.concat(1, [pw_feats, c_feats, n_feats])
+                feats = tf.concat([pw_feats, c_feats, n_feats], 1)
 
             for i in range(1, cfg.gnet.num_block_pw_fc + 1):
                 feats = tf.contrib.layers.fully_connected(
