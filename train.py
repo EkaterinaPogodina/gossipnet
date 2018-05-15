@@ -80,8 +80,10 @@ def get_optimizer(loss_op, tvars):
 def load_and_enqueue(sess, enqueue_op, coord, dataset, placeholders):
     for _ in range(cfg.train.num_iter):
         if coord.should_stop():
-            return
+            return  
         batch = dataset.next_batch()
+        print(batch)
+        return
         food = {ph: batch[name] for (name, ph) in placeholders}
         sess.run(enqueue_op, feed_dict=food)
 
