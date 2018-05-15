@@ -299,7 +299,7 @@ class Gnet(object):
                 self.weights = self.weights * sample_weight
 
                 sample_losses = tf.nn.sigmoid_cross_entropy_with_logits(
-                    self.prediction, self.labels)
+                    logits=self.prediction, labels=self.labels)
                 weighted_losses = sample_losses * self.weights
                 self.loss_unnormed = tf.reduce_sum(
                     weighted_losses, name='cls_loss_unnormed')
