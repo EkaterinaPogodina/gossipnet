@@ -142,7 +142,6 @@ def val_run(sess, net, val_imdb):
         if 'dets' not in roi or roi['dets'].size == 0:
             continue
         roi = load_roi(need_image, roi)
-        print(roi.keys(), batch_spec.keys())
         feed_dict = {getattr(net, name): roi[name]
                      for name in batch_spec.keys()}
         weights, labels, scores = sess.run(
