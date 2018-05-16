@@ -142,7 +142,6 @@ def val_run(sess, net, val_imdb):
         if 'dets' not in roi or roi['dets'].size == 0:
             continue
         roi = load_roi(need_image, roi)
-        print(roi.keys(), batch_spec.keys())
         feed_dict = {getattr(net, name): roi[name]
                      for name in batch_spec.keys()}
         weights, labels, scores = sess.run(
@@ -335,17 +334,17 @@ def train(resume, visualize):
                        'multiclass AP {:5.1f}').format(
                       datetime.now(), it, val_map, mc_ap))
 
-                save_path = saver.save(sess, net.name, global_step=it)
-                print('wrote model to {}'.format(save_path))
+                #save_path = saver.save(sess, net.name, global_step=it)
+                #print('wrote model to {}'.format(save_path))
                 # dump_debug_info(sess, net, it)
-                model_manager.add(it, val_map, save_path)
-                model_manager.print_summary()
-                model_manager.write_link_to_best('./gnet_best')
+                #model_manager.add(it, val_map, save_path)
+                #model_manager.print_summary()
+                #model_manager.write_link_to_best('./gnet_best')
 
-            elif it % cfg.train.save_iter == 0 or it == cfg.train.num_iter:
-                save_path = saver.save(sess, net.name, global_step=it)
-                print('wrote model to {}'.format(save_path))
-                # dump_debug_info(sess, net, it)
+            #elif it % cfg.train.save_iter == 0 or it == cfg.train.num_iter:
+            #    save_path = saver.save(sess, net.name, global_step=it)
+            #    print('wrote model to {}'.format(save_path))
+            #    # dump_debug_info(sess, net, it)
 
         coord.request_stop()
         coord.join()

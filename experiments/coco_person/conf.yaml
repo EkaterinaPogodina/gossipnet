@@ -14,7 +14,7 @@ train:
   - - 2000000
     - 1.0e-05
   max_num_detections: 600
-  num_iter: 2000000
+  num_iter: 400000
   only_class: person
   optimizer: adam
   pos_weight: 0.1
