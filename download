@@ -7,12 +7,15 @@ wget "http://images.cocodataset.org/annotations/annotations_trainval2014.zip"
 wget "http://images.cocodataset.org/zips/train2014.zip"
 wget "http://images.cocodataset.org/zips/val2014.zip"
 unzip annotations_trainval2014.zip
+mkdir images
+cd imges
 unzip val2014.zip
 unzip train2014.zip
-cp annotations/instances_val2014.json annotations/image_info_minival2014.json
-rm annotations_trainval2014.zip
 rm train2014.zip
 rm val2014.zip
+cd ..
+cp annotations/instances_val2014.json annotations/image_info_minival2014.json
+rm annotations_trainval2014.zip
 cd ..
 wget "http://datasets.d2.mpi-inf.mpg.de/hosang17cvpr/coco_2014_FRCN.tar.gz"
 tar xf coco_2014_FRCN.tar.gz
