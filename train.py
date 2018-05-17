@@ -282,8 +282,8 @@ def train(resume, visualize):
             slim.get_variables_by_suffix('Adam_1', scope='resnet_v1') + \
             slim.get_variables_by_suffix('Adam', scope='resnet_v1') + \
             slim.get_variables_by_suffix('Momentum', scope='resnet_v1')
-        restorer = tf.train.Saver(
-            list(set(variables_to_restore) - set(variables_to_exclude)))
+        #restorer = tf.train.Saver(
+        #    list(set(variables_to_restore) - set(variables_to_exclude)))
 
     saver = tf.train.Saver(max_to_keep=None)
     model_manager = ModelManager()
@@ -297,11 +297,12 @@ def train(resume, visualize):
 
         start_iter = 1
         if resume:
+            print('yes')
             restorer.restore(sess, ckpt.model_checkpoint_path)
             tensor = tf.get_default_graph().get_tensor_by_name("global_step:0")
             start_iter = sess.run(tensor + 1)
-        elif cfg.gnet.imfeats:
-            restorer.restore(sess, cfg.train.pretrained_model)
+        #elif cfg.gnet.imfeats:
+        #    restorer.restore(sess, cfg.train.pretrained_model)
 
         for it in range(start_iter, cfg.train.num_iter + 1):
             if coord.should_stop():
@@ -318,8 +319,7 @@ def train(resume, visualize):
                 [train_op, smoothed_optimized_loss, smoothed_loss_normed,
                  smoothed_loss_unnormed, merge_summaries_op],
                 feed_dict={learning_rate: lr_gen.get_lr(it)})
-            train_writer.add_summary(summary, it)
-
+            train_writer.add_summary(summary, it)           
             if it % cfg.train.display_iter == 0:
                 print(('{}  iter {:6d}   lr {:8g}   opt loss {:8g}     '
                        'data loss normalized {:8g}   '
