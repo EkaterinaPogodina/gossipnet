@@ -11,7 +11,7 @@ import tensorflow.contrib.slim as slim
 from tensorflow.contrib.slim.nets import resnet_v1
 
 from nms_net import cfg
-from nms_net.roi_pooling_layer import roi_pooling_op
+from nms_net.roi_pooling_layer import roi_pooling_op, roi_pooling_op_grad
 from nms_net import matching_module
 
 
@@ -50,7 +50,7 @@ def weighted_logistic_loss(logits, labels, instance_weights):
 
 
 def get_resnet(image_tensor, reuse):
-    with slim.arg_scope(resnet_v1.resnet_arg_scope(is_training=False)):
+    with slim.arg_scope(resnet_v1.resnet_arg_scope()):
         mean = tf.constant(cfg.pixel_mean, dtype=tf.float32,
                            shape=[1, 1, 1, 3], name='img_mean')
         image = image_tensor - mean
@@ -82,7 +82,7 @@ def enlarge_windows(boxdata, padding=0.5):
     nw2 = w * (0.5 + padding)
     nh2 = h * (0.5 + padding)
 
-    boxes = tf.concat(1, [cx - nw2, cy - nh2, cx + nw2, cy + nh2])
+    boxes = tf.concat([cx - nw2, cy - nh2, cx + nw2, cy + nh2], 1)
     return boxes
 
 
@@ -96,7 +96,7 @@ def to_tf_coords(boxes, hw):
 
 def to_frcn_coords(boxes):
     shape = tf.stack([tf.shape(boxes)[0], 1])
-    new_boxes = tf.concat(1, [tf.zeros(shape, dtype=boxes.dtype), boxes])
+    new_boxes = tf.concat([tf.zeros(shape, dtype=boxes.dtype), boxes], 1)
     return new_boxes
 
 
@@ -115,6 +115,7 @@ def crop_windows(imfeats, boxdata, stride):
     detection_feats, _ = roi_pooling_op.roi_pool(
         imfeats, frcn_boxes, pooled_height=cfg.imfeat_crop_height,
         pooled_width=cfg.imfeat_crop_width, spatial_scale=1.0 / stride)
+    print(detection_feats)
     return detection_feats, frcn_boxes
 
 
@@ -223,7 +224,9 @@ class Gnet(object):
             if cfg.gnet.imfeats:
                 self.roifeats, self.frcn_boxes = crop_windows(
                         self.imfeats, self.dets_boxdata, stride)
-                self.det_imfeats = tf.contrib.layers.flatten(self.roifeats)
+                print('!!!!!!!!!!!!!!!!!!!!', self.roifeats.shape)
+                self.det_imfeats = tf.contrib.layers.flatten(self.roifeats, [-1, 128])
+                #self.det_imfeats = self.roifeats
                 with tf.variable_scope('reduce_imfeats'):
                     if cfg.gnet.imfeat_dim > 0:
                         self.det_imfeats = tf.contrib.layers.fully_connected(
@@ -437,8 +440,8 @@ class Gnet(object):
             n_cy = tf.gather(y1, n_idxs) + n_h / 2.0
 
             # normalized x, y distance
-            x_dist = (n_cx - c_cx)
-            y_dist = (n_cy - c_cy)
+            x_dist = tf.abs(n_cx - c_cx)
+            y_dist = tf.abs(n_cy - c_cy)
             l2_dist = tf.sqrt(x_dist ** 2 + y_dist ** 2) / c_scale
             x_dist /= c_scale
             y_dist /= c_scale
@@ -449,6 +452,7 @@ class Gnet(object):
             h_diff = tf.log(n_h / c_h) / log2
             aspect_diff = (tf.log(n_w / n_h) - tf.log(c_w / c_h)) / log2
 
+            #l2_dist
             all = tf.concat([c_score, n_score, ious, x_dist, y_dist, l2_dist,
                 w_diff, h_diff, aspect_diff], 1)
             return tf.stop_gradient(all)
